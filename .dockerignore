@@ -1,0 +1,6 @@
+.git
+.venv
+keycloak/Dockerfile
+vari*.tf
+terra*.tfvars
+.terr*
