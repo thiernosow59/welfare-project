@@ -1,0 +1,51 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy container app to Azure Web App - welfare-project-acr
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to registry
+      uses: docker/login-action@v1
+      with:
+        registry: https://welfarecontainer1.azurecr.io/
+        username: ${{ secrets.AzureAppService_ContainerUsername_d526dae003d648578a8acb1b81265ccf }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_95c63cc7f127492f9b826b90c85de5f5 }}
+
+    - name: Build and push container image to registry
+      uses: docker/build-push-action@v2
+      with:
+        push: true
+        tags: welfarecontainer1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d526dae003d648578a8acb1b81265ccf }}/welfare-project:${{ github.sha }}
+        file: ./Dockerfile
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+    - name: Deploy to Azure Web App
+      id: deploy-to-webapp
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'welfare-project-acr'
+        slot-name: 'production'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_cbf3d2bf76214b17a2b807c910f0b0be }}
+        images: 'welfarecontainer1.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d526dae003d648578a8acb1b81265ccf }}/welfare-project:${{ github.sha }}'
