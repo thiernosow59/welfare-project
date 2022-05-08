@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "welfareakscluster-841f"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "welfareakscluster-841f"
+  template:
+    metadata:
+      labels:
+        app: "welfareakscluster-841f"
+    spec:
+      containers:
+        - name: "welfareakscluster-841f"
+          image: "welfarecontainer1.azurecr.io/welfareakscluster"
+          ports:
+          - containerPort: 9000
