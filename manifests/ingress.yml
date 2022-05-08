@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "welfareakscluster-841f"
+    labels:
+        app: "welfareakscluster-841f"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: welfare-aks-clusterb089-welfareakscluster-841f.c14058ee877a4518956a.centralus.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "welfareakscluster-841f"
+                servicePort: 9000
